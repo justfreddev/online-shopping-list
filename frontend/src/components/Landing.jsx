@@ -1,16 +1,22 @@
-import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 
-const Landing = () => {
+import "./Landing.css";
+
+const Landing = (props) => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>Your Shopping List</h1>
+    <div className="landing-container">
+      <h1 className="landing-title">Your Online Shopping List</h1>
+      <h2>Login below to get started</h2>
       <GoogleLogin
         onSuccess={(credentialResponse) => {
+          let credential = jwtDecode(credentialResponse.credential);
           console.log(jwtDecode(credentialResponse.credential));
+          props.setUserId(credential.sub);
+          props.setName(credential.given_name);
           navigate("/shopping");
         }}
         onError={() => {
