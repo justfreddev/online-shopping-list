@@ -1,24 +1,17 @@
-import axios from "axios";
-import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
+import Landing from "./components/Landing";
+import Shopping from "./components/Shopping";
+
 function App() {
-  const [helloWorld, setHelloWorld] = useState("");
-
-  async function fetchHelloWorld() {
-    await axios
-      .get("http://localhost:8080/hello")
-      .then((response) => {
-        setHelloWorld(response.data.message);
-      })
-      .catch((e) => console.error("Error fetching data:", e));
-  }
-
   return (
-    <div>
-      <button onClick={fetchHelloWorld}>Say hello world</button>
-      <h1>{helloWorld}</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/shopping" element={<Shopping />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
