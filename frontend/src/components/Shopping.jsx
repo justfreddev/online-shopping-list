@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+
 import { ShoppingListService } from "../services/ShoppingListService";
 import ShoppingList from "./ShoppingList";
+
 import "./Shopping.css";
 
 const Shopping = (props) => {
@@ -67,7 +69,16 @@ const Shopping = (props) => {
       <h4>Welcome back {props.name}! Here is your shopping list</h4>
       <div className="shopping-content-container">
         <div className="delete-button-container">
-          <Button onClick={deleteAllItems} variant="outlined" color="error">
+          <Button
+            onClick={deleteAllItems}
+            variant="outlined"
+            color="error"
+            sx={{
+              height: 50,
+              borderRadius: "24px",
+              px: 3,
+            }}
+          >
             Delete all items
           </Button>
         </div>
@@ -90,7 +101,17 @@ const Shopping = (props) => {
               }
             }}
           />
-          <Button onClick={addItem} variant="contained" color="primary">
+          <Button
+            onClick={addItem}
+            variant="contained"
+            color="primary"
+            sx={{
+              borderRadius: "24px",
+              px: 3,
+              width: "100%",
+              textTransform: "none",
+            }}
+          >
             Add Item
           </Button>
         </div>

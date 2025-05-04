@@ -11,22 +11,25 @@ const Landing = (props) => {
     <div className="landing-container">
       <h1 className="landing-title">Your Online Shopping List</h1>
       <h2>Login below to get started</h2>
-      <GoogleLogin
-        onSuccess={(credentialResponse) => {
-          let credential = jwtDecode(credentialResponse.credential);
-          props.setUserId(credential.sub);
-          props.setName(credential.given_name);
-          navigate("/shopping");
-        }}
-        onError={() => {
-          console.error("Login Failed");
-        }}
-        auto_select={true}
-        theme={"outline"}
-        size={"large"}
-        text={"continue_with"}
-        shape={"pill"}
-      />
+      <div className="login-button-container">
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            let credential = jwtDecode(credentialResponse.credential);
+            props.setUserId(credential.sub);
+            props.setName(credential.given_name);
+            navigate("/shopping");
+          }}
+          onError={() => {
+            console.error("Login Failed");
+          }}
+          auto_select={true}
+          theme={"outline"}
+          size={"large"}
+          text={"continue_with"}
+          shape={"pill"}
+          width="250px"
+        />
+      </div>
     </div>
   );
 };

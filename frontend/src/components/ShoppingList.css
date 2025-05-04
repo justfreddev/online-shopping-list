@@ -1,0 +1,48 @@
+.list-title {
+  color: #5f6368;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.empty-message {
+  color: #5f6368;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+}
+
+.list-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.item-text {
+  color: #202124;
+  text-align: center;
+}
+
+.MuiDivider-root {
+  margin: 0;
+}
+
+/* Makes a custom scrollbar for the shopping list when it overflows */
+.shopping-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.shopping-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.shopping-list-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.shopping-list-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
