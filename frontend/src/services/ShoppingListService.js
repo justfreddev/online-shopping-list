@@ -8,8 +8,8 @@ export const ShoppingListService = {
       const response = await axios.post(
         `${API_URL}/getlist`,
         {
-          "userId": userId,
-          "name": name,
+          userId: userId,
+          name: name,
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -20,9 +20,59 @@ export const ShoppingListService = {
         throw new Error(response.data.message);
       }
 
-      return response.data.items;
+      return [response.data.items, response.data.quantities];
     } catch (e) {
       console.error("Error getting shopping list:", e);
+      throw e;
+    }
+  },
+
+  addItem: async (userId, item, quantity) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/additem`,
+        {
+          userId: userId,
+          item: item,
+          quantity: quantity,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (response.data.status === 400) {
+        throw new Error(response.data.message);
+      }
+
+      return [response.data.items, response.data.quantities];
+    } catch (e) {
+      console.error("Error adding item:", e);
+      throw e;
+    }
+  },
+
+  updateQuantity: async (userId, index, value) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/updatequantity`,
+        {
+          userId: userId,
+          index: index,
+          value: value,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (response.data.status === 400) {
+        throw new Error(response.data.message);
+      }
+
+      return response.data.quantities;
+    } catch (e) {
+      console.error("Error deleting item:", e);
       throw e;
     }
   },
@@ -32,8 +82,8 @@ export const ShoppingListService = {
       const response = await axios.post(
         `${API_URL}/deleteitem`,
         {
-          "userId": userId,
-          "index": index,
+          userId: userId,
+          index: index,
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -44,33 +94,9 @@ export const ShoppingListService = {
         throw new Error(response.data.message);
       }
 
-      return response.data.items;
+      return [response.data.items, response.data.quantities];
     } catch (e) {
       console.error("Error deleting item:", e);
-      throw e;
-    }
-  },
-
-  addItem: async (userId, item) => {
-    try {
-      const response = await axios.post(
-        `${API_URL}/additem`,
-        {
-          "userId": userId,
-          "item": item,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      if (response.data.status === 400) {
-        throw new Error(response.data.message);
-      }
-
-      return response.data.items;
-    } catch (e) {
-      console.error("Error adding item:", e);
       throw e;
     }
   },
@@ -80,7 +106,7 @@ export const ShoppingListService = {
       const response = await axios.post(
         `${API_URL}/deleteall`,
         {
-          "userId": userId,
+          userId: userId,
         },
         {
           headers: { "Content-Type": "application/json" },

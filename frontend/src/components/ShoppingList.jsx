@@ -5,10 +5,37 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { TextField } from "@mui/material";
+import { useEffect, useState } from "react";
 
 import "./ShoppingList.css";
 
 const ShoppingList = (props) => {
+  const [localQuantities, setLocalQuantities] = useState({});
+
+  useEffect(() => {
+    setLocalQuantities({});
+  }, [props.list.length]);
+
+  function validateQuantity(value, index) {
+    if (!props.validateQuantity(value)) {
+      props.setQuantityErrors({
+        ...props.quantityErrors,
+        [index]: "Invalid quantity",
+      });
+      return false;
+    }
+
+    clearErrorDisplayAtIndex(index);
+    return true;
+  }
+
+  function clearErrorDisplayAtIndex(index) {
+    const newErrors = { ...props.quantityErrors };
+    delete newErrors[index];
+    props.setQuantityErrors(newErrors);
+  }
+
   return (
     <>
       <Typography
@@ -18,65 +45,136 @@ const ShoppingList = (props) => {
         Your Items
       </Typography>
       <List sx={{ width: "100%" }}>
-        {props.list.length === 0 ? (
-          <ListItem>
-            <Box sx={{ width: "100%", textAlign: "center" }}>
-              <Typography
-                sx={{
-                  color: "#5f6368",
-                  fontStyle: "italic",
-                  textAlign: "center",
-                }}
-              >
-                No items yet
-              </Typography>
-            </Box>
-          </ListItem>
-        ) : (
-          props.list.map((item, index) => (
-            <div key={index}>
-              <ListItem
-                key={index}
-                disablePadding
-                sx={{
-                  py: 1,
-                  justifyContent: "center",
-                }}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => props.handleDelete(index)}
-                    sx={{ color: "#5f6368" }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                }
-              >
-                <Box
+        {
+          // Only renders when there are no items in the shopping list
+          props.list.length === 0 ? (
+            <ListItem>
+              <Box sx={{ width: "100%", textAlign: "center" }}>
+                <Typography
                   sx={{
-                    ml: 1,
-                    mr: 7,
-                    width: "100%",
+                    color: "#5f6368",
+                    fontStyle: "italic",
                     textAlign: "center",
                   }}
                 >
-                  <Typography
+                  No items yet
+                </Typography>
+              </Box>
+            </ListItem>
+          ) : (
+            // Only renders when there is at least one item in the shopping list
+            props.list.map((item, index) => (
+              <div key={index}>
+                <ListItem
+                  disablePadding
+                  sx={{
+                    py: 1,
+                    justifyContent: "center",
+                    position: "relative",
+                    minHeight: "56px",
+                  }}
+                  secondaryAction={
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        props.handleDelete(index);
+                        clearErrorDisplayAtIndex(index);
+                      }}
+                      sx={{
+                        color: "#5f6368",
+                        position: "absolute",
+                        top: "50%",
+                        right: 8,
+                        transform: "translateY(-50%)",
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                >
+                  <Box
                     sx={{
-                      color: "#202124",
-                      textAlign: "center",
+                      ml: 1,
+                      mr: 7,
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "left",
+                      gap: "20px",
                     }}
                   >
-                    {item}
-                  </Typography>
-                </Box>
-              </ListItem>
-              {index < props.list.length - 1 && (
-                <Divider variant="fullWidth" component="li" />
-              )}
-            </div>
-          ))
-        )}
+                    <div style={{ position: "relative" }}>
+                      <TextField
+                        variant="outlined"
+                        type="number"
+                        value={
+                          // Display local quantity if it exists,
+                          // otherwise use the saved quantity from props,
+                          // or default to 1 if no quantity is available (shouldn't happen)
+                          localQuantities[index] !== undefined
+                            ? localQuantities[index]
+                            : props.quantities?.[index] || 1
+                        }
+                        helperText={props.quantityErrors[index]}
+                        error={!!props.quantityErrors[index]}
+                        sx={{
+                          width: "75px",
+                          "& .MuiOutlinedInput-root": {
+                            height: "40px",
+                          },
+                          "& .MuiFormHelperText-root": {
+                            top: "100%",
+                            marginTop: "2px",
+                          },
+                        }}
+                        onChange={(e) => {
+                          setLocalQuantities({
+                            ...localQuantities,
+                            [index]: e.target.value,
+                          });
+
+                          if (validateQuantity(e.target.value, index)) {
+                            props.updateQuantity(
+                              index,
+                              parseInt(e.target.value)
+                            );
+                          }
+                        }}
+                        onBlur={(e) => {
+                          if (validateQuantity(e.target.value, index)) {
+                            // Once an input turns invalid --> valid, remove its error message
+                            setLocalQuantities((prev) => {
+                              const newLocalQuantities = { ...prev };
+                              delete newLocalQuantities[index];
+                              return newLocalQuantities;
+                            });
+                          } else {
+                            e.target.focus();
+                          }
+                        }}
+                      />
+                    </div>
+                    <Typography
+                      sx={{
+                        color: "#202124",
+                        textAlign: "center",
+                      }}
+                    >
+                      {item}
+                    </Typography>
+                  </Box>
+                </ListItem>
+                {
+                  // Only renders when there is more than one item in the shopping list
+                  index < props.list.length - 1 && (
+                    <Divider variant="fullWidth" component="li" />
+                  )
+                }
+              </div>
+            ))
+          )
+        }
       </List>
     </>
   );

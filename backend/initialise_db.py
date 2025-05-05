@@ -10,7 +10,8 @@ c.execute(
     CREATE TABLE IF NOT EXISTS shoppinglists (
         user_id INT NOT NULL,
         name TEXT NOT NULL,
-        items JSON
+        items JSON,
+        quantities JSON
     )
     """
 )

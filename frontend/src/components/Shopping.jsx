@@ -9,48 +9,97 @@ import "./Shopping.css";
 
 const Shopping = (props) => {
   const itemTextRef = useRef(null);
+  const quantityTextRef = useRef(null);
+  const [isValidItem, setIsValidItem] = useState(true);
+  const [isValidQuantity, setIsValidQuantity] = useState(true);
   const [shoppingList, setShoppingList] = useState([]);
+  const [quantities, setQuantities] = useState([]);
+  const [quantityErrors, setQuantityErrors] = useState({});
 
+  // Validates if a quantity number is valid
+  function validateQuantity(itemQuantity) {
+    const numValue = parseInt(itemQuantity);
+    return !(
+      itemQuantity === "" ||
+      isNaN(numValue) ||
+      numValue < 1 ||
+      !Number.isInteger(parseFloat(itemQuantity))
+    );
+  }
+
+  // Fetches the shopping list as soon as the Shopping component loads (when page loads)
   useEffect(() => {
     async function fetchShoppingList() {
       try {
-        const items = await ShoppingListService.getShoppingList(
+        const [items, quantities_] = await ShoppingListService.getShoppingList(
           props.userId,
           props.name
         );
+        setQuantities(quantities_);
         setShoppingList(items);
-      } catch (error) {
-        console.error("Error fetching shopping list:", error);
+      } catch {
+        alert("Failed to fetch shopping list. Please try again.");
         setShoppingList([]);
+        setQuantities([]);
       }
     }
     fetchShoppingList();
   }, [props.userId, props.name]);
 
-  async function handleDeleteItem(index) {
-    try {
-      const updatedItems = await ShoppingListService.deleteItem(
-        props.userId,
-        index
-      );
-      setShoppingList(updatedItems);
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  }
-
   async function addItem() {
+    // Gets item and quantity values
     const item = itemTextRef.current.value.trim();
-    if (item === "") {
+    const itemQuantity = quantityTextRef.current.value.trim();
+
+    // Validates the values
+    const quantityValid = validateQuantity(itemQuantity);
+    const itemValid = item !== "";
+
+    setIsValidQuantity(quantityValid);
+    setIsValidItem(itemValid);
+
+    if (!quantityValid || !itemValid) {
       return;
     }
 
     try {
-      const updatedList = await ShoppingListService.addItem(props.userId, item);
-      setShoppingList(updatedList);
+      await ShoppingListService.addItem(
+        props.userId,
+        item,
+        parseInt(itemQuantity)
+      );
+      setShoppingList([...shoppingList, item]);
+      setQuantities([...quantities, itemQuantity]);
+
+      // Resets the inputs for item and quantity
       itemTextRef.current.value = "";
-    } catch (error) {
-      console.error("Error adding item:", error);
+      quantityTextRef.current.value = "1";
+    } catch {
+      alert("Failed to add item. Please try again.");
+    }
+  }
+
+  async function updateQuantity(index, value) {
+    try {
+      const updatedQuantities = await ShoppingListService.updateQuantity(
+        props.userId,
+        index,
+        value
+      );
+      setQuantities(updatedQuantities);
+    } catch {
+      alert("Failed to update quantity. Please try again.");
+    }
+  }
+
+  async function handleDeleteItem(index) {
+    try {
+      const [updatedItems, updatedQuantities] =
+        await ShoppingListService.deleteItem(props.userId, index);
+      setShoppingList(updatedItems);
+      setQuantities(updatedQuantities);
+    } catch {
+      alert("Failed to delete item. Please try again.");
     }
   }
 
@@ -58,8 +107,10 @@ const Shopping = (props) => {
     try {
       await ShoppingListService.deleteAllItems(props.userId);
       setShoppingList([]);
-    } catch (error) {
-      console.error("Error deleting all items:", error);
+      setQuantities([]);
+      setQuantityErrors({});
+    } catch {
+      alert("Failed to delete items. Please try again.");
     }
   }
 
@@ -84,12 +135,22 @@ const Shopping = (props) => {
         </div>
 
         <div className="shopping-list-container">
-          <ShoppingList list={shoppingList} handleDelete={handleDeleteItem} />
+          <ShoppingList
+            list={shoppingList}
+            quantities={quantities}
+            handleDelete={handleDeleteItem}
+            updateQuantity={updateQuantity}
+            quantityErrors={quantityErrors}
+            setQuantityErrors={setQuantityErrors}
+            validateQuantity={validateQuantity}
+          />
         </div>
 
         <div className="additem-container">
           <TextField
-            label="Enter item here"
+            label="Item"
+            helperText={!isValidItem ? "Item invalid" : ""}
+            error={!isValidItem}
             variant="outlined"
             fullWidth
             inputRef={itemTextRef}
@@ -99,6 +160,38 @@ const Shopping = (props) => {
                 e.preventDefault();
                 addItem();
               }
+            }}
+            onChange={(e) => {
+              if (e.target.value.trim() !== "") {
+                setIsValidItem(true);
+              }
+            }}
+            onBlur={(e) => {
+              if (e.target.value.trim() !== "") {
+                setIsValidItem(true);
+              }
+            }}
+          />
+          <TextField
+            label="Quantity"
+            defaultValue={1}
+            helperText={!isValidQuantity ? "Quantity invalid" : ""}
+            error={!isValidQuantity}
+            variant="outlined"
+            inputRef={quantityTextRef}
+            type="number"
+            sx={{ mb: 2, width: "125px" }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addItem();
+              }
+            }}
+            onChange={(e) => {
+              setIsValidQuantity(validateQuantity(e.target.value));
+            }}
+            onBlur={(e) => {
+              setIsValidQuantity(validateQuantity(e.target.value));
             }}
           />
           <Button

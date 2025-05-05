@@ -14,9 +14,11 @@ const Landing = (props) => {
       <div className="login-button-container">
         <GoogleLogin
           onSuccess={(credentialResponse) => {
+            // Gets necessary details about user
             let credential = jwtDecode(credentialResponse.credential);
             props.setUserId(credential.sub);
             props.setName(credential.given_name);
+            props.setIsAuthenticated(true);
             navigate("/shopping");
           }}
           onError={() => {
