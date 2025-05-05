@@ -1,4 +1,5 @@
 import datetime
+import json
 from flask import Blueprint, current_app, jsonify, make_response, request  # type: ignore
 import jwt  # type: ignore
 import sqlite3
@@ -37,6 +38,10 @@ def login():
         if not user:
             c.execute(
                 "INSERT INTO users (google_id, name) VALUES (?, ?)", (google_id, name)
+            )
+            c.execute(
+                "INSERT INTO shopping (user_id, items, quantities, checked_items) VALUES (?, ?, ?, ?)",
+                (google_id, json.dumps([]), json.dumps([]), json.dumps([])),
             )
 
         conn.commit()

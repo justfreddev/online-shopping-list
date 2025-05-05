@@ -13,6 +13,7 @@ export const ShoppingListService = {
         },
         {
           headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
       );
 
@@ -20,7 +21,11 @@ export const ShoppingListService = {
         throw new Error(response.data.message);
       }
 
-      return [response.data.items, response.data.quantities];
+      return [
+        response.data.items,
+        response.data.quantities,
+        response.data.checked_items,
+      ];
     } catch (e) {
       console.error("Error getting shopping list:", e);
       throw e;
@@ -38,6 +43,7 @@ export const ShoppingListService = {
         },
         {
           headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
       );
 
@@ -45,7 +51,11 @@ export const ShoppingListService = {
         throw new Error(response.data.message);
       }
 
-      return [response.data.items, response.data.quantities];
+      return [
+        response.data.items,
+        response.data.quantities,
+        response.data.checked_items,
+      ];
     } catch (e) {
       console.error("Error adding item:", e);
       throw e;
@@ -63,6 +73,7 @@ export const ShoppingListService = {
         },
         {
           headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
       );
 
@@ -87,6 +98,7 @@ export const ShoppingListService = {
         },
         {
           headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
       );
 
@@ -94,7 +106,11 @@ export const ShoppingListService = {
         throw new Error(response.data.message);
       }
 
-      return [response.data.items, response.data.quantities];
+      return [
+        response.data.items,
+        response.data.quantities,
+        response.data.checked_items,
+      ];
     } catch (e) {
       console.error("Error deleting item:", e);
       throw e;
@@ -110,6 +126,7 @@ export const ShoppingListService = {
         },
         {
           headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
       );
 
@@ -120,6 +137,31 @@ export const ShoppingListService = {
       return;
     } catch (e) {
       console.error("Error deleting all items:", e);
+      throw e;
+    }
+  },
+
+  toggleItemChecked: async (userId, index) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/toggleitemcheck`,
+        {
+          userId: userId,
+          index: index,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.status === 400) {
+        throw new Error(response.data.message);
+      }
+
+      return;
+    } catch (e) {
+      console.error("Error checking item off list:", e);
       throw e;
     }
   },

@@ -20,6 +20,7 @@ c.execute(
         user_id TEXT NOT NULL,
         items JSON,
         quantities JSON,
+        checked_items JSON,
         FOREIGN KEY (user_id) REFERENCES users (google_id)
     )
     """

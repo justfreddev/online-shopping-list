@@ -1,11 +1,12 @@
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import { TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import "./ShoppingList.css";
@@ -156,6 +157,7 @@ const ShoppingList = (props) => {
                       />
                     </div>
                     <Typography
+                      className={`item-text ${props.checkedItems[index] ? 'checked' : ''}`}
                       sx={{
                         color: "#202124",
                         textAlign: "center",
@@ -163,6 +165,11 @@ const ShoppingList = (props) => {
                     >
                       {item}
                     </Typography>
+                    <Checkbox 
+                      checked={!!props.checkedItems[index]} 
+                      onChange={() => props.toggleItemChecked(index)}
+                      sx={{ color: "#5f6368" }}
+                    />
                   </Box>
                 </ListItem>
                 {

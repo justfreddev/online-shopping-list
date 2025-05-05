@@ -15,6 +15,7 @@ const Shopping = (props) => {
   const [shoppingList, setShoppingList] = useState([]);
   const [quantities, setQuantities] = useState([]);
   const [quantityErrors, setQuantityErrors] = useState({});
+  const [checkedItems, setCheckedItems] = useState([]);
 
   // Validates if a quantity number is valid
   function validateQuantity(itemQuantity) {
@@ -31,12 +32,11 @@ const Shopping = (props) => {
   useEffect(() => {
     async function fetchShoppingList() {
       try {
-        const [items, quantities_] = await ShoppingListService.getShoppingList(
-          props.userId,
-          props.name
-        );
-        setQuantities(quantities_);
+        const [items, quantities_, checkedItems_] =
+          await ShoppingListService.getShoppingList(props.userId, props.name);
         setShoppingList(items);
+        setQuantities(quantities_);
+        setCheckedItems(checkedItems_);
       } catch {
         alert("Failed to fetch shopping list. Please try again.");
         setShoppingList([]);
@@ -94,10 +94,11 @@ const Shopping = (props) => {
 
   async function handleDeleteItem(index) {
     try {
-      const [updatedItems, updatedQuantities] =
+      const [updatedItems, updatedQuantities, updatedCheckedItems] =
         await ShoppingListService.deleteItem(props.userId, index);
       setShoppingList(updatedItems);
       setQuantities(updatedQuantities);
+      setCheckedItems(updatedCheckedItems);
     } catch {
       alert("Failed to delete item. Please try again.");
     }
@@ -111,6 +112,25 @@ const Shopping = (props) => {
       setQuantityErrors({});
     } catch {
       alert("Failed to delete items. Please try again.");
+    }
+  }
+
+  async function toggleItemChecked(index) {
+    try {
+      const newCheckedItems = [...checkedItems];
+      newCheckedItems[index] = !newCheckedItems[index];
+      
+      setCheckedItems(newCheckedItems);
+      
+      await ShoppingListService.toggleItemChecked(
+        props.userId,
+        index,
+      );
+    } catch (error) {
+      console.error("Failed to update item checked status:", error);
+
+      const revertedCheckedItems = [...checkedItems];
+      setCheckedItems(revertedCheckedItems);
     }
   }
 
@@ -157,6 +177,8 @@ const Shopping = (props) => {
             quantityErrors={quantityErrors}
             setQuantityErrors={setQuantityErrors}
             validateQuantity={validateQuantity}
+            checkedItems={checkedItems}
+            toggleItemChecked={toggleItemChecked}
           />
         </div>
 

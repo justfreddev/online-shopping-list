@@ -22,6 +22,12 @@
 .item-text {
   color: #202124;
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.item-text.checked {
+  text-decoration: line-through;
+  color: #5f6368;
 }
 
 .MuiDivider-root {
