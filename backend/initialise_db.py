@@ -7,11 +7,20 @@ c = conn.cursor()
 
 c.execute(
     """
-    CREATE TABLE IF NOT EXISTS shoppinglists (
-        user_id INT NOT NULL,
-        name TEXT NOT NULL,
+    CREATE TABLE IF NOT EXISTS users (
+        google_id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+    )
+    """
+)
+
+c.execute(
+    """
+    CREATE TABLE IF NOT EXISTS shopping (
+        user_id TEXT NOT NULL,
         items JSON,
-        quantities JSON
+        quantities JSON,
+        FOREIGN KEY (user_id) REFERENCES users (google_id)
     )
     """
 )

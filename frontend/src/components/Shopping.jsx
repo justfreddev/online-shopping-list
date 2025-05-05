@@ -116,6 +116,20 @@ const Shopping = (props) => {
 
   return (
     <div className="shopping-container">
+      <Button
+        variant="text"
+        onClick={props.handleLogout}
+        sx={{
+          position: "absolute",
+          top: 16,
+          left: 16,
+          textTransform: "none",
+          color: "#5f6368",
+          fontWeight: 500,
+        }}
+      >
+        Log out
+      </Button>
       <h1>Shopping List</h1>
       <h4>Welcome back {props.name}! Here is your shopping list</h4>
       <div className="shopping-content-container">
