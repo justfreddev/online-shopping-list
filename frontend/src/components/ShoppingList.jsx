@@ -156,8 +156,15 @@ const ShoppingList = (props) => {
                         }}
                       />
                     </div>
+                    <Checkbox
+                      checked={!!props.checkedItems[index]}
+                      onChange={() => props.toggleItemChecked(index)}
+                      sx={{ color: "#5f6368" }}
+                    />
                     <Typography
-                      className={`item-text ${props.checkedItems[index] ? 'checked' : ''}`}
+                      className={`item-text ${
+                        props.checkedItems[index] ? "checked" : ""
+                      }`}
                       sx={{
                         color: "#202124",
                         textAlign: "center",
@@ -165,11 +172,6 @@ const ShoppingList = (props) => {
                     >
                       {item}
                     </Typography>
-                    <Checkbox 
-                      checked={!!props.checkedItems[index]} 
-                      onChange={() => props.toggleItemChecked(index)}
-                      sx={{ color: "#5f6368" }}
-                    />
                   </Box>
                 </ListItem>
                 {

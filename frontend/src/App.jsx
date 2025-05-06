@@ -16,7 +16,7 @@ function App() {
     async function validateSession() {
       try {
         const response = await axios.post(
-          `http://localhost:8080/auth/checksession`,
+          `http://localhost:5000/auth/checksession`,
           {},
           {
             headers: { "Content-Type": "application/json"},
@@ -40,7 +40,7 @@ function App() {
   async function handleLogout() {
     try {
       const response = await axios.post(
-        `http://localhost:8080/auth/logout`,
+        `http://localhost:5000/auth/logout`,
         {},
         {
           headers: { "Content-Type": "application/json" },

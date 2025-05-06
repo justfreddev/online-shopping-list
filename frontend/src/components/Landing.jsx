@@ -13,7 +13,7 @@ const Landing = (props) => {
 
     try{
       const response = await axios.post(
-        `http://localhost:8080/auth/login`,
+        `http://localhost:5000/auth/login`,
         {
           userId: credential.sub,
           name: credential.given_name
