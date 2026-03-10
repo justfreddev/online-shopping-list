@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a simple webapp that allows users to keep track of their shopping list. It provides a digital alternative to pen and paper, so that you can save your precious notebook space.
+This project is a simple webapp that allows users to keep track of their shopping list.
 
 ## Features
 
@@ -31,8 +31,8 @@ Prerequisites
 
 ```bash
 # Clone the repository onto your machine
-git clone https://github.com/google-london-apprenticeships/Project-FP.git
-cd Project-FP/backend
+git clone https://github.com/justfreddev/online-shopping-list.git
+cd online-shopping-list/backend
 
 # Set up and activate the virtual environment
 python -m venv .venv
